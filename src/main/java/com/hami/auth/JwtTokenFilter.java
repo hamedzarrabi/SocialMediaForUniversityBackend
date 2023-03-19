@@ -1,6 +1,8 @@
 package com.hami.auth;
 
+import com.hami.entity.Role;
 import com.hami.entity.User;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +44,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void setAuthenticationContext(String accessToken, HttpServletRequest request) {
         UserDetails userDetails = getUserDetails(accessToken);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -51,7 +53,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private UserDetails getUserDetails(String accessToken) {
         User userDetails = new User();
-        String[] subjectArray = jwtTokenUtil.getSubject(accessToken).split(",");
+
+        Claims claims = jwtTokenUtil.parseClaims(accessToken);
+
+        String claimRoles = (String) claims.get("roles");
+        System.out.println("claimRoles: " + claimRoles);
+
+        claimRoles = claimRoles.replace("[", "").replace("]", "");
+        String[] roleNames = claimRoles.split(",");
+
+        for (String aRoleName : roleNames) {
+            userDetails.addRole(new Role(aRoleName));
+        }
+
+        String subject = (String) claims.get(Claims.SUBJECT);
+
+        String[] subjectArray = subject.split(",");
 
         userDetails.setId(Long.parseLong(subjectArray[0]));
         userDetails.setEmail(subjectArray[1]);

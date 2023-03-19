@@ -17,14 +17,17 @@ public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
     @Value("${app.jwt.secret}")
     private String secretKey;
-    public String generateAcccessToken(User user) {
+    public String generateAccessToken(User user) {
+
         return Jwts.builder()
                 .setSubject(user.getId() + "," + user.getEmail())
+                .claim("roles", user.getRoles().toString())
                 .setIssuer("HamedZarrabi")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+
     }
 
     public boolean validateAccessToken(String token) {
@@ -55,6 +58,5 @@ public class JwtTokenUtil {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-
     }
 }

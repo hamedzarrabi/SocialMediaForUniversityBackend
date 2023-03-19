@@ -1,5 +1,6 @@
 package com.hami;
 
+import com.hami.entity.Role;
 import com.hami.entity.User;
 import com.hami.repository.UserRepository;
 
@@ -10,8 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -21,7 +22,7 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @Test
+@Test
     public void testCreateUser() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String rawPassword = "hamed2023";
@@ -32,5 +33,18 @@ public class UserRepositoryTest {
         User savedUser = userRepository.save(newUser);
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getId()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testAssignRolesToUser() {
+        Long userId = 1l;
+        long roleId = 2l;
+
+        User user = userRepository.findById(userId).get();
+        user.addRole(new Role(roleId));
+
+        User updatedUser = userRepository.save(user);
+
+//        assertThat(updatedUser.getRoles()).hasSize(1);
     }
 }

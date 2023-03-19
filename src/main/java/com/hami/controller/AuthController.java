@@ -32,7 +32,7 @@ public class AuthController {
             );
             User user = (User) authenticate.getPrincipal();
 
-            String accessToken = jwtTokenUtil.generateAcccessToken(user);
+            String accessToken = jwtTokenUtil.generateAccessToken(user);
 
             AuthResponse response = new AuthResponse(user.getEmail(), accessToken);
 
