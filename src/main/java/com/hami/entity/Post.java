@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+
 import javax.persistence.*;
 
 @Entity
@@ -19,9 +20,11 @@ public class Post {
     @Column
     private String image;
 
-    @Column
+    @Column(nullable = false)
+    @Length(min = 2, max = 50)
     private String title;
 
-    @Column
+    @Column(nullable = false)
+    @Length(min = 2, max = 2000)
     private String description;
 }
