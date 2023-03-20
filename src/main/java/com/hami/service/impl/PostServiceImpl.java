@@ -1,13 +1,13 @@
 package com.hami.service.impl;
 
 import com.hami.entity.Post;
+import com.hami.exception.ResourceNotFoundException;
 import com.hami.repository.PostRepository;
 import com.hami.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -26,7 +26,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
+        Post post = postRepository.findByPostId(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "postId", postId)
+        );
+        postRepository.delete(post);
     }
 
     @Override
@@ -35,7 +38,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<Post> findPostById(Long postId) {
-        return postRepository.findPostById(postId);
+    public Post findPostById(Long postId) {
+        Post post = postRepository.findByPostId(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "postId", postId)
+        );
+        return post;
     }
 }

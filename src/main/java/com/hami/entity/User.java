@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.*;
 
 @Entity
@@ -21,6 +22,7 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     @Column(nullable = false, unique = true, length = 50)
+    @Email
     private String email;
     @Column(nullable = false, length = 64)
     private String password;
@@ -30,6 +32,16 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(name = "date_register")
     private Date dateRegister;
+
+    private Date dateOfBirth;
+    private String location;
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes;
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",
