@@ -5,6 +5,7 @@ import com.hami.auth.JwtTokenUtil;
 import com.hami.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
         securedEnabled = false,
         jsr250Enabled = true
 )
+@Configuration
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private UserRepository userRepository;
@@ -50,7 +52,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.exceptionHandling().authenticationEntryPoint(
@@ -61,9 +63,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         );
 
         http.authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/post/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+
 }

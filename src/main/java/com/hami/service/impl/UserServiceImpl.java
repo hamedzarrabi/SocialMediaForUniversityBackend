@@ -4,10 +4,12 @@ import com.hami.entity.User;
 import com.hami.repository.UserRepository;
 import com.hami.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired private UserRepository userRepository;
@@ -23,8 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findUserId(Long userId) {
-        return userRepository.findById(userId);
+    public User findUserId(String userId) {
+        return userRepository.findByUserId(userId);
     }
 
     @Override
@@ -33,7 +35,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(Long userId) {
-        userRepository.deleteById(userId);
+    public void deleteUserById(String userId) {
+
     }
+
+    @Override
+    public User displayUserMetaDate(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+
 }

@@ -1,8 +1,6 @@
 package com.hami.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,15 +8,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    private String userId;
     private String firstName;
     private String lastName;
     @Column(nullable = false, unique = true, length = 50)
@@ -28,19 +31,10 @@ public class User implements UserDetails {
     private String password;
     @Column(name = "image_profile")
     private String imageProfile;
-    private String mobile;
     @CreationTimestamp
     @Column(name = "date_register")
     private Date dateRegister;
-
     private Date dateOfBirth;
-    private String location;
-    @OneToMany(mappedBy = "user")
-    private List<Post> posts;
-    @OneToMany(mappedBy = "user")
-    private List<Comment> comments;
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
 
     @ManyToMany
     @JoinTable(
@@ -53,13 +47,16 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String imageProfile, String mobile) {
+    public User(String userId, String firstName, String lastName, String email, String password, String imageProfile, Date dateRegister, Date dateOfBirth) {
+
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.imageProfile = imageProfile;
-        this.mobile = mobile;
+        this.dateRegister = dateRegister;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public void addRole(Role role) {

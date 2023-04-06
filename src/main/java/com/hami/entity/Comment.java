@@ -1,31 +1,38 @@
 package com.hami.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "comments")
+@Getter
+@Setter
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-    @Length(max = 2000)
-    private String text;
+    private Long id;
+
+    private String commentId;
+    private String userId;
+    private String postId;
     @CreationTimestamp
-    private Date createdAt;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User createdBy;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Post post;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    private Timestamp timestamp;
+    private String comment;
+    private String email;
+
+    public Comment() {
+    }
+
+    public Comment(Long id, String commentId, String userId, String postId, Timestamp timestamp, String comment) {
+        this.id = id;
+        this.commentId = commentId;
+        this.userId = userId;
+        this.postId = postId;
+        this.timestamp = timestamp;
+        this.comment = comment;
+    }
 }

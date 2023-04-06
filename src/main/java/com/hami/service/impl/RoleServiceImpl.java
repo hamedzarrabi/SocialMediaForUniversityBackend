@@ -5,11 +5,12 @@ import com.hami.repository.RoleRepository;
 import com.hami.repository.UserRepository;
 import com.hami.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RoleServiceImpl implements RoleService {
 
     @Autowired RoleRepository roleRepository;
-    @Autowired UserRepository userRepository;
 
     @Override
     public Role updateRole(Role role) {
