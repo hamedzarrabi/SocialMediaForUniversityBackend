@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.io.File;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")
@@ -79,10 +80,24 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable("postId") String postId) {
-        System.out.println(postId);
-        postService.deletePost(postId);
-        return new ResponseEntity<>("Delete post Successfully!", HttpStatus.OK);
+    public ResponseEntity<String> deletePost(@PathVariable("postId") String postId, @RequestParam("userId") String userId) {
+        Optional<Post> post = postService.findPost(postId);
+        if (post.isPresent()) {
+            if (post.get().getUserId().equals(userId)) {
+                postService.deletePost(postId, userId);
+                return new ResponseEntity<>("Post deleted successfully.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("You are not authorized to delete this post.", HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            return new ResponseEntity<>("Post not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+    @GetMapping("/find/{postId}")
+    public ResponseEntity<Optional<Post>> findPost(@PathVariable("postId") String postId) {
+        Optional<Post> post = postService.findPost(postId);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 }

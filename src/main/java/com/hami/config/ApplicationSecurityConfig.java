@@ -22,11 +22,6 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = false,
-        securedEnabled = false,
-        jsr250Enabled = true
-)
 @Configuration
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
