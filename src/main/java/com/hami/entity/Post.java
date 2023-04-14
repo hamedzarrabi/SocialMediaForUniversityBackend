@@ -18,11 +18,10 @@ public class Post {
 
     private String postId;
     private String userId;
-    private String postPath;
-    private String email;
     private String title;
     private String image;
     private String textPost;
+    private String email;
     @CreationTimestamp
     private Timestamp timestamp;
     private int likeCount;

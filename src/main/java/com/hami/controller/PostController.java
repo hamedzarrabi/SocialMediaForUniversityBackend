@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,31 +29,35 @@ public class PostController {
     @Autowired private PostService postService;
     @Autowired private UserService userService;
 
-
-
     @PostMapping(value = "/createPost/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createPost(@RequestBody Post post,@RequestParam("image") MultipartFile image, @PathVariable("userId") String userId) {
-        String imageAddress = image.getOriginalFilename();
+    public ResponseEntity<?> createPost(@RequestParam("image") MultipartFile image, @RequestParam("title") String title, @RequestParam("description") String description, @PathVariable("userId") String userId) {
+
         User user = userService.findUserId(userId);
 
+        String imageAddress = "images/Posts/" + user.getEmail(); // + "/" + imageProfile.getOriginalFilename();
+        String originalAddressImage = "I:/Project/Instagram/frontend/public/images/Posts/" + user.getEmail();
+        Post post = new Post();
         if (user != null) {
             SecureRandom random = new SecureRandom();
-            post.setImage(imageAddress);
+            post.setImage(imageAddress + "/" + image.getOriginalFilename());
+            post.setTitle(title);
+            post.setTextPost(description);
             post.setUserId(user.getUserId());
-            savePicture(image);
+            post.setPostId(String.valueOf(random.nextInt(90000) + 1));
+
+
+            savePicture(image, originalAddressImage);
             Post newPost = postService.createPost(post);
-            newPost.setPostId(String.valueOf(random.nextInt(90000) + 1));
             return new ResponseEntity<>(newPost, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("UserId not found", HttpStatus.NOT_FOUND);
         }
     }
 
-
-    private String savePicture(MultipartFile image) {
+    private String savePicture(MultipartFile image, String address) {
         String fileName = StringUtils.cleanPath(image.getOriginalFilename());
         try {
-            Path path = Paths.get("src/main/resources/images/");
+            Path path = Paths.get(address);
             Files.createDirectories(path);
             Files.copy(image.getInputStream(), path.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
             return "Success image save";
@@ -66,5 +71,18 @@ public class PostController {
 
         List<Post> posts = postService.getAllPost();
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+    @GetMapping("/count/{userId}")
+    public ResponseEntity<?> countPosts(@PathVariable("userId") String userId) {
+        Long post = postService.countPosts(userId);
+        System.out.println(post);
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable("postId") String postId) {
+        System.out.println(postId);
+        postService.deletePost(postId);
+        return new ResponseEntity<>("Delete post Successfully!", HttpStatus.OK);
     }
 }

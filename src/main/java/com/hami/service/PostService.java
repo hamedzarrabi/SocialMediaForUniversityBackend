@@ -9,5 +9,7 @@ public interface PostService {
 
     public Post createPost(Post post);
     public List<Post> getAllPost();
-    public String savePostImage(MultipartFile multipartFile, String fileName);
+    public Long countPosts(String userId);
+    public void deletePost(String postId);
+
 }

@@ -59,6 +59,7 @@ public class User implements UserDetails {
         this.dateOfBirth = dateOfBirth;
     }
 
+
     public void addRole(Role role) {
         this.roles.add(role);
     }
